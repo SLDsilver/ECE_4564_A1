@@ -6,7 +6,9 @@ import json
 from cryptography.fernet import Fernet as fn
 import hashlib
 import pickle
-
+import ServerKeys
+import urllib.request
+import os
 class Server:
     def __init__(self,host="",port=50000,backlog=5,size=1024,cp=False):
         self.cp = cp
@@ -87,13 +89,18 @@ class Server:
         return d_msg
 
     def speak_question(self, str):
-        if self.cp: print("[Checkpoint 06] ******** TODO: Speak Question *********")
+        command = 'curl -X POST -u "apikey:' + ServerKeys.WATSON_KEY + '" --header "Content-Type: application/json" --header "Accept: audio/wav" --data \'{"text": "' + str + '"}\' --output out.wav "https://gateway-wdc.watsonplatform.net/text-to-speech/api/v1/synthesize"'
+        os.system(command)
+        os.system('aplay out.wav')
+        if self.cp: print("[Checkpoint 06] Speaking Question: ", str)
         return
 
     def ask_wolphram(self, str):
-        if self.cp: print("[Checkpoint 07] ******** TODO: Ask Wolphram *********")
-        if self.cp: print("[Checkpoint 08] ******** TODO: Receive Wolphram *********")
-        return str
+        if self.cp: print("[Checkpoint 07] Sending question to Wolphramalpha: ", str)
+        url = "http://api.wolframalpha.com/v1/result?appid=" + ServerKeys.APP_ID + "&i=" + urllib.parse.quote_plus(str)
+        ans = urllib.request.urlopen(url).read().decode()  
+        if self.cp: print("[Checkpoint 08] Received answer from Wolframalpha: ", ans)
+        return ans 
 
 if __name__ == '__main__':
     #Add argument parser for user input arguments, with default values

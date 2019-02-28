@@ -10,6 +10,8 @@ from imutils.video import VideoStream
 from pyzbar import pyzbar
 import time
 import cv2
+import ServerKeys
+import os
 
 class Client:
     def __init__(self,host='localhost',port=50000,size=1024,msg='Hello, world',cp=False):
@@ -38,7 +40,10 @@ class Client:
         self.s.close()
     
     def speak_answer(self,str):
-        if self.cp: print("[Checkpoint 08] ******** TODO: Speak Answer *********")
+        command = 'curl -X POST -u "apikey:' + ServerKeys.WATSON_KEY + '" --header "Content-Type: application/json" --header "Accept: audio/wav" --data \'{"text": "' + str + '"}\' --output out.wav "https://gateway-wdc.watsonplatform.net/text-to-speech/api/v1/synthesize"'
+        os.system(command)
+        os.system('aplay out.wav')
+        if self.cp: print("[Checkpoint 08] Speaking answer: ",str)
         return
     
     def receive_msg(self, client):
