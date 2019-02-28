@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import string
 import socket
 import sys
 import argparse as ap
@@ -20,10 +21,11 @@ class Client:
         self.s = None
         self.size=size
         try:
-            if self.cp: print("[Checkpoint 01] Connecting to ", str(host), " on port ", str(port))
+            if self.cp: print("[Checkpoint 01] Connecting to ", str("".join(host)), " on port ", str(port))
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.s.connect((host,port))
+            self.s.connect(("".join(host),port))
         
+
         except socket.error as message:
             if self.s:
                 self.s.close()
