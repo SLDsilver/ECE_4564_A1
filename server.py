@@ -9,6 +9,10 @@ import pickle
 import ServerKeys
 import urllib.request
 import os
+import request_watson as watson
+
+
+
 class Server:
     def __init__(self,host="",port=50000,backlog=5,size=1024,cp=False):
         self.cp = cp
@@ -89,9 +93,8 @@ class Server:
         return d_msg
 
     def speak_question(self, str):
-        command = 'curl -X POST -u "apikey:' + ServerKeys.WATSON_KEY + '" --header "Content-Type: application/json" --header "Accept: audio/wav" --data \'{"text": "' + str + '"}\' --output out.wav "https://gateway-wdc.watsonplatform.net/text-to-speech/api/v1/synthesize"'
-        os.system(command)
-        os.system('aplay out.wav')
+        watson.request('question.wav',str)
+        os.system('aplay question.wav')
         if self.cp: print("[Checkpoint 06] Speaking Question: ", str)
         return
 
